@@ -3,13 +3,13 @@ package com.team1389.robot;
 
 import com.team1389.auto.AutoModeBase;
 import com.team1389.auto.AutoModeExecuter;
-import com.team1389.configuration.PIDConstants;
-import com.team1389.hardware.outputs.hardware.CANTalonHardware;
-import com.team1389.hardware.registry.Registry;
-import com.team1389.hardware.registry.port_types.CAN;
+import com.team1389.hardware.inputs.hardware.SpartanGyro;
 import com.team1389.operation.TeleopMain;
+import com.team1389.system.drive.FourWheelSignal;
+import com.team1389.watch.info.NumberInfo;
 import com.team1389.watchers.DashboardInput;
 
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 
 /**
@@ -24,40 +24,61 @@ public class Robot extends IterativeRobot
 	RobotSoftware robot;
 	TeleopMain teleOperator;
 	AutoModeExecuter autoModeExecuter;
-	CANTalonHardware talon;
-	Registry registry;
+	SpartanGyro.CalibrateCommand gyroCalib;
 
 	/**
-	 * This function is run when the robot is first started up and should be
-	 * used for any initialization code.
+	 * This function is run when the robot is first started up and should be used
+	 * for any initialization code.
 	 */
 	@Override
 	public void robotInit()
 	{
-		registry = new Registry();
 		robot = RobotSoftware.getInstance();
-		teleOperator = new TeleopMain(robot);
-		autoModeExecuter = new AutoModeExecuter();
-		DashboardInput.getInstance().init();
-		talon = new CANTalonHardware(false, new CAN(0), registry);
 
+		DashboardInput.getInstance().init();
+		autoModeExecuter = new AutoModeExecuter();
+
+		teleOperator = new TeleopMain(robot);
+		gyroCalib = robot.gyro.new CalibrateCommand(true);
+
+		CameraServer.getInstance().startAutomaticCapture(0);
+		CameraServer.getInstance().startAutomaticCapture(1);
 	}
 
 	@Override
 	public void autonomousInit()
 	{
-
 		autoModeExecuter.stop();
 		AutoModeBase selectedAutonMode = DashboardInput.getInstance().getSelectedAutonMode();
 		autoModeExecuter.setAutoMode(selectedAutonMode);
+		gyroCalib.cancel();
+	}
 
+	/**
+	 * This function is called periodically during autonomous
+	 */
+	@Override
+	public void autonomousPeriodic()
+	{
+	}
+
+	@Override
+	public void disabledInit()
+	{
+
+	}
+
+	@Override
+	public void disabledPeriodic()
+	{
+		gyroCalib.exec();
 	}
 
 	@Override
 	public void teleopInit()
 	{
+		gyroCalib.cancel();
 		autoModeExecuter.stop();
-
 		teleOperator.init();
 	}
 
@@ -68,11 +89,15 @@ public class Robot extends IterativeRobot
 	public void teleopPeriodic()
 	{
 		teleOperator.periodic();
-		talon.getVelocityControl(new PIDConstants(1, 0, 0)).set(500);
+//robot.gearIntake.getVoltageController().set(1);
 	}
 
+	/**
+	 * This function is called periodically during test mode
+	 */
 	@Override
-	public void disabledInit()
+	public void testInit()
 	{
+
 	}
 }
