@@ -27,8 +27,8 @@ public class Robot extends IterativeRobot
 	SpartanGyro.CalibrateCommand gyroCalib;
 
 	/**
-	 * This function is run when the robot is first started up and should be used
-	 * for any initialization code.
+	 * This function is run when the robot is first started up and should be
+	 * used for any initialization code.
 	 */
 	@Override
 	public void robotInit()
@@ -41,8 +41,6 @@ public class Robot extends IterativeRobot
 		teleOperator = new TeleopMain(robot);
 		gyroCalib = robot.gyro.new CalibrateCommand(true);
 
-		CameraServer.getInstance().startAutomaticCapture(0);
-		CameraServer.getInstance().startAutomaticCapture(1);
 	}
 
 	@Override
@@ -89,7 +87,6 @@ public class Robot extends IterativeRobot
 	public void teleopPeriodic()
 	{
 		teleOperator.periodic();
-//robot.gearIntake.getVoltageController().set(1);
 	}
 
 	/**

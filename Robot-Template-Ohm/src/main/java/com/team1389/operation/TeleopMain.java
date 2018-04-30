@@ -46,7 +46,7 @@ public class TeleopMain
 		OctocanumSystem drive = setupDrive();
 	//	GearIntakeSystem gearIntake = setupGearIntake(drive.getDriveModeTracker());
 		//Subsystem climbing = setUpClimbing();
-		manager = new SystemManager(drive, setupGearIntake(), setupHopper());
+		manager = new SystemManager(drive, setupGearIntake(), setupHopper(), setUpClimbing());
 		manager.init();
 	}
 
@@ -57,11 +57,12 @@ public class TeleopMain
 	//drive straight is actually quickturn
 	private OctocanumSystem setupDrive()
 	{
-		return new OctocanumSystem(robot.voltageDrive.forEach(op -> op.scale(.5)), robot.pistons, robot.gyroInput, controls.xDriveX(),
-				controls.xLeftDriveY(), controls.driveYaw(), controls.driveTrim(), new DigitalIn(()-> false),
+		return new OctocanumSystem(robot.voltageDrive, robot.pistons, robot.gyroInput, controls.driveXAxis(),
+				controls.driveYAxis(), controls.driveYaw(), controls.driveTrim(), new DigitalIn(()-> false),
 				controls.xDriveStraightButton());
 	
 	}
+	
 
 	/**
 	 * 
